@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -39,18 +40,18 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 SaveData(String a) async{
-var directory = await getApplicationDocumentsDirectory();
-var mypath =directory.path;
-var file = File("$mypath/data.txt");
-file.writeAsString(a);
+var pref = await SharedPreferences.getInstance();
+pref.setString("key1", "$a");
 
 }
 GetData() async{
-  var directory = await getApplicationDocumentsDirectory();
-  var mypath =directory.path;
-  var file = File("$mypath/data.txt");
-  var s= file.readAsString();
+  var pref = await SharedPreferences.getInstance();
+  var s=pref.getString("key1")??"no";
   return s;
+}
+DeleteData() async{
+    var pref = await SharedPreferences.getInstance();
+    pref.remove("key1");
 }
 
   TextEditingController myname = new TextEditingController();
@@ -119,6 +120,25 @@ GetData() async{
     overflow: TextOverflow.ellipsis,
     style: const TextStyle(fontWeight: FontWeight.bold),
     )
+
+           ),
+           SizedBox(height: 10),
+           Container(
+             child: FlatButton(
+               child: Text('Delete Data', style: TextStyle(fontSize: 20.0),),
+               color: Colors.blueAccent,
+               textColor: Colors.white,
+               onPressed: ()
+               async
+               {
+
+                 await DeleteData();
+                 s="Noname";
+                 setState(() {
+
+                 });
+               },
+             ),
 
            ),
 
